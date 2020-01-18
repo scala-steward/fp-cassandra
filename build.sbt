@@ -1,18 +1,22 @@
 import sbtrelease.ReleaseStateTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 
+val circeVersion = "0.12.3"
+
 // -------------------------------------------------------------------------------------------------------------------
 // Root Project
 // -------------------------------------------------------------------------------------------------------------------
 lazy val root = (project in file("."))
   .settings(
-    inThisBuild(List(
-      organization := "com.techmonal",
-      scalaVersion := "2.13.1",
-      scalastyleFailOnError := true,
-      scalastyleFailOnWarning := false,
-      scalafmtOnCompile := true
-    )),
+    inThisBuild(
+      List(
+        organization := "com.techmonal",
+        scalaVersion := "2.13.1",
+        scalastyleFailOnError := true,
+        scalastyleFailOnWarning := false,
+        scalafmtOnCompile := true
+      )
+    ),
     name := "fp-cassandra"
   )
   .aggregate(common, db, web)
@@ -21,35 +25,47 @@ lazy val root = (project in file("."))
 // -------------------------------------------------------------------------------------------------------------------
 // Common Module
 // -------------------------------------------------------------------------------------------------------------------
-lazy val common = project.in(file("modules/common"))
+lazy val common = project
+  .in(file("modules/common"))
   .settings(name := "common")
   .settings(libraryDependencies ++= commonLibraryDependencies)
 
 // -------------------------------------------------------------------------------------------------------------------
 // Web Module
 // -------------------------------------------------------------------------------------------------------------------
-lazy val web = project.in(file("modules/web"))
+lazy val web = project
+  .in(file("modules/web"))
   .settings(name := "web")
-  .aggregate(common).dependsOn(common)
+  .aggregate(common)
+  .dependsOn(common)
   .settings(libraryDependencies ++= webLibraryDependencies)
 
 // -------------------------------------------------------------------------------------------------------------------
 // DB Module
 // -------------------------------------------------------------------------------------------------------------------
-lazy val db = project.in(file("modules/db"))
+lazy val db = project
+  .in(file("modules/db"))
   .settings(name := "db")
-  .aggregate(common).dependsOn(common)
-  .settings(libraryDependencies ++= dbLibraryDependencies)
+  .aggregate(common)
+  .dependsOn(common)
+  .settings(libraryDependencies ++= circeDependencies ++ dbLibraryDependencies)
 
 lazy val commonLibraryDependencies = Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3",
-
-  "org.scalatest" %% "scalatest" % "3.0.8" % Test
+  "org.scalatest"  %% "scalatest"      % "3.0.8" % Test
 )
 
 lazy val webLibraryDependencies = Seq()
 
-lazy val dbLibraryDependencies = Seq()
+lazy val dbLibraryDependencies = Seq(
+  "com.datastax.dse" % "dse-java-driver-core" % "1.5.1"
+)
+
+lazy val circeDependencies = Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)
 
 scalacOptions ++= Seq(
   "-feature",
@@ -81,4 +97,8 @@ releaseProcess := Seq(
   pushChanges
 )
 
+addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
+
 addCommandAlias("validate", "; clean; compile; test;")
+addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
+addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
