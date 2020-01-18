@@ -28,6 +28,7 @@ lazy val root = (project in file("."))
 lazy val common = project
   .in(file("modules/common"))
   .settings(name := "common")
+  .settings(addCompilerPlugin(kindProjectorSetting))
   .settings(libraryDependencies ++= commonLibraryDependencies)
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -38,6 +39,7 @@ lazy val web = project
   .settings(name := "web")
   .aggregate(common)
   .dependsOn(common)
+  .settings(addCompilerPlugin(kindProjectorSetting))
   .settings(libraryDependencies ++= webLibraryDependencies)
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -48,6 +50,7 @@ lazy val db = project
   .settings(name := "db")
   .aggregate(common)
   .dependsOn(common)
+  .settings(addCompilerPlugin(kindProjectorSetting))
   .settings(libraryDependencies ++= circeDependencies ++ dbLibraryDependencies)
 
 lazy val commonLibraryDependencies = Seq(
@@ -58,7 +61,8 @@ lazy val commonLibraryDependencies = Seq(
 lazy val webLibraryDependencies = Seq()
 
 lazy val dbLibraryDependencies = Seq(
-  "com.datastax.dse" % "dse-java-driver-core" % "1.5.1"
+  "com.datastax.dse" % "dse-java-driver-core" % "1.5.1",
+  "org.typelevel"    %% "cats-core"           % "2.0.0"
 )
 
 lazy val circeDependencies = Seq(
@@ -72,7 +76,9 @@ scalacOptions ++= Seq(
   "-unchecked",
   "-language:higherKinds",
   "-language:postfixOps",
-  "-deprecation"
+  "-deprecation",
+  "-Ypartial-unification",
+  "-encoding"
 )
 
 resolvers ++= Seq(
@@ -97,8 +103,9 @@ releaseProcess := Seq(
   pushChanges
 )
 
-addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
+lazy val kindProjectorSetting = "org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full
 
-addCommandAlias("validate", "; clean; compile; test;")
-addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
-addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
+addCommandAlias("fmt", ";scalafmtSbt;scalafmt;test:scalafmt")
+addCommandAlias("cpl", ";compile;test:compile")
+addCommandAlias("validate", ";clean;scalafmtSbtCheck;scalafmtCheck;test:scalafmtCheck;coverage;test;coverageOff;coverageReport;coverageAggregate")
+addCommandAlias("testAll", ";clean;test;it:test")
