@@ -27,7 +27,7 @@ final case class Schema[T](columnDetails: Seq[ColumnDetails[T]])(implicit tableD
 
   def buildSelectQueryIn[ID](ids: Set[ID]): Select.Where = buildMapOfAllColumns ~> buildSelect ~> addWhere(ids)
 
-  private def buildInsert: Insert = QueryBuilder.insertInto(tableDetails.keyspace, tableDetails.tableName)
+  private def buildInsert: Insert = insertInto(tableDetails.keyspace, tableDetails.tableName)
 
   private def addRecords(recordMap: RecordMap)(insert: Insert): Insert = {
     val list = recordMap.toList.map { case (k, v) => (k, v.raw) }
@@ -45,20 +45,20 @@ final case class Schema[T](columnDetails: Seq[ColumnDetails[T]])(implicit tableD
 
   private def buildSelect(s: Select.Selection): Select = s.from(tableDetails.keyspace, tableDetails.tableName)
 
-  private def buildUpdate: Update = QueryBuilder.update(tableDetails.keyspace, tableDetails.tableName)
+  private def buildUpdate: Update = update(tableDetails.keyspace, tableDetails.tableName)
 
   private def buildSet(cassandraMap: RecordMap)(update: Update): Update.Assignments = {
     val list: List[(String, Any)] = cassandraMap.toList.collect { case (k, v) if k != tableDetails.pkName => (k, v.raw) }
     val head :: tail              = list
 
-    tail.foldLeft(update.`with`(QueryBuilder.set(head._1, head._2))) {
-      case (acc, (name, value)) => acc.and(QueryBuilder.set(name, value))
+    tail.foldLeft(update.`with`(set(head._1, head._2))) {
+      case (acc, (name, value)) => acc.and(set(name, value))
     }
   }
 
   private def addWhere[ID](id: ID)(s: Select): Select.Where = s.where(QueryBuilder.eq(tableDetails.pkName, id))
 
-  private def addWhere[ID](ids: Set[ID])(s: Select): Select.Where = s.where(QueryBuilder.in(tableDetails.pkName, ids.toList.asJava))
+  private def addWhere[ID](ids: Set[ID])(s: Select): Select.Where = s.where(in(tableDetails.pkName, ids.toList.asJava))
 
   private def addWhereWithUpdate[ID](id: ID)(update: Update.Assignments): Update.Where = update.where(QueryBuilder.eq(tableDetails.pkName, id))
 
