@@ -1,0 +1,16 @@
+<configuration>
+
+    <logger name="com.datastax" level="${TEST_LOG_LEVEL:-off}"/>
+    <logger name="org.apache.cassandra" level="${TEST_LOG_LEVEL:-off}"/>
+    <logger name="com.twitter" level="${TEST_LOG_LEVEL:-off}"/>
+
+    <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+        <encoder>
+            <pattern>%d{ISO8601} ${HOSTNAME} %-5level %logger %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <appender-ref ref="STDOUT"/>
+
+</configuration>

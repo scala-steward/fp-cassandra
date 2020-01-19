@@ -23,6 +23,8 @@ object Record {
 
   implicit def doubleRecord(t: Double): Record = GenRecord(t)
 
+  implicit def longRecord(t: Long): Record = GenRecord(t)
+
   implicit def instantRecord(t: Instant): Record = GenRecord(t.toEpochMilli)
 
   implicit def uuidRecord(t: UUID): Record = GenRecord(t)
