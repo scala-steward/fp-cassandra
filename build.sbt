@@ -56,7 +56,7 @@ lazy val db = project
 lazy val commonLibraryDependencies = Seq(
   "com.twitter"       %% "util-core"                % "21.3.0",
   "ch.qos.logback"    % "logback-classic"           % "1.2.3",
-  "org.scalatest"     %% "scalatest"                % "3.0.9" % Test,
+  "org.scalatest"     %% "scalatest"                % "3.2.8" % Test,
   "org.scalatestplus" %% "scalatestplus-scalacheck" % "3.1.0.0-RC2" % Test
 ) ++ circeDependencies
 
