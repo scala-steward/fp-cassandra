@@ -1,7 +1,7 @@
 import sbtrelease.ReleaseStateTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 
-val circeVersion = "0.12.3"
+val circeVersion = "0.13.0"
 
 // -------------------------------------------------------------------------------------------------------------------
 // Root Project
