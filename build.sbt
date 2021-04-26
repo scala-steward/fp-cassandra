@@ -1,7 +1,7 @@
 import sbtrelease.ReleaseStateTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 
-val circeVersion = "0.12.3"
+val circeVersion = "0.13.0"
 
 // -------------------------------------------------------------------------------------------------------------------
 // Root Project
@@ -11,7 +11,7 @@ lazy val root = (project in file("."))
     inThisBuild(
       List(
         organization := "com.techmonal",
-        scalaVersion := "2.13.1",
+        scalaVersion := "2.13.5",
         scalastyleFailOnError := true,
         scalastyleFailOnWarning := false,
         scalafmtOnCompile := true
@@ -54,18 +54,18 @@ lazy val db = project
   .settings(libraryDependencies ++= dbLibraryDependencies)
 
 lazy val commonLibraryDependencies = Seq(
-  "com.twitter"       %% "util-core"                % "19.12.0",
+  "com.twitter"       %% "util-core"                % "21.3.0",
   "ch.qos.logback"    % "logback-classic"           % "1.2.3",
-  "org.scalatest"     %% "scalatest"                % "3.0.8" % Test,
+  "org.scalatest"     %% "scalatest"                % "3.0.9" % Test,
   "org.scalatestplus" %% "scalatestplus-scalacheck" % "3.1.0.0-RC2" % Test
 ) ++ circeDependencies
 
 lazy val webLibraryDependencies = Seq()
 
 lazy val dbLibraryDependencies = commonLibraryDependencies ++ Seq(
-  "com.datastax.dse"  % "dse-java-driver-core" % "1.5.1",
-  "org.typelevel"     %% "cats-core"           % "2.6.0",
-  "org.cassandraunit" % "cassandra-unit"       % "3.5.0.1"
+  "com.datastax.dse"  % "dse-java-driver-core" % "1.9.0",
+  "org.typelevel"     %% "cats-core"           % "2.0.0",
+  "org.cassandraunit" % "cassandra-unit"       % "3.11.2.0"
 )
 
 lazy val circeDependencies = Seq(
@@ -106,7 +106,7 @@ releaseProcess := Seq(
   pushChanges
 )
 
-lazy val kindProjectorSetting = "org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full
+lazy val kindProjectorSetting = "org.typelevel" %% "kind-projector" % "0.11.3" cross CrossVersion.full
 
 addCommandAlias("fmt", ";scalafmtSbt;scalafmt;test:scalafmt")
 addCommandAlias("cpl", ";compile;test:compile")
