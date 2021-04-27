@@ -34,7 +34,7 @@ object TestData {
   implicit object NoteResult extends ResultBuilder[Note] {
     override def rowBuilder(builder: RowBuilder): Try[Note] = {
       import builder._
-      import cats.implicits._
+      import cats.syntax.all._
 
       (
         getString("id"),

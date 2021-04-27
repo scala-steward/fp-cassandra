@@ -1,7 +1,7 @@
 package com.techmonal.db
 
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import com.datastax.driver.core._
 
 import scala.util.Success
